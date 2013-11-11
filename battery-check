@@ -1,0 +1,55 @@
+#!/bin/bash
+# Periodic checks of the battery status
+BATTERY_CHECK_LOG_FILE="/var/log/battery-check.log"
+# You don't need this file, I only use it so I can git the project and 
+# then git-ignore the config file that has my email address in it.
+# if you don't want to use it, see notes below.
+BATTERY_CHECK_CONFIG_FILE="/home/jim/bin/battery-check/battery_check_config_file"
+exec >>$BATTERY_CHECK_LOG_FILE 2>&1
+BATTERY_STATUS=$(/usr/bin/acpi -b)
+#echo $BATTERY_STATUS
+BATTERY_PERCENT=$(/usr/bin/acpi -b | awk '{ loc=index($0,"%"); print substr($0,loc-3,4)}')
+BATTERY_PERCENT_WO_PERCENT_SIGN=$(/usr/bin/acpi -b | awk '{ loc=index($0,"%"); print substr($0,loc-3,3)}')
+BATTERY_THRESHOLD="92"
+#echo "BT and BP $BATTERY_THRESHOLD $BATTERY_PERCENT_WO_PERCENT_SIGN"
+HOSTNAME=$(hostname)
+# Weirdly substr takes the starting index and the number of characters. Should have read the manual
+#echo "$BATTERY_PERCENT"
+#echo "Got to 1"
+LAST_BATTERY_CHECK_VARIABLE_FILE="/var/log/last_battery_check_file"
+DATE_NOW=$(date | awk '{ print substr( $0, 0, 11 ) }')
+read DATE_LAST_LOGGED <$LAST_BATTERY_CHECK_VARIABLE_FILE
+if [ -f $BATTERY_CHECK_CONFIG_FILE ]
+    then
+    read EMAIL<$BATTERY_CHECK_CONFIG_FILE
+    #echo $EMAIL
+fi
+#echo "Got to 1a"
+#if [ "$BATTERY_PERCENT" != "100%" ]
+if ! echo "$BATTERY_THRESHOLD $BATTERY_PERCENT_WO_PERCENT_SIGN -p" | dc | grep > /dev/null ^-; then
+        #echo "Got to 1b"
+        # Running on battery, so log every check and and send email
+        echo "Battery for $HOSTNAME at "$BATTERY_PERCENT" at `date` "$BATTERY_STATUS
+        #echo "Got to 1c"
+        # command for mail/semdmail, uncomment to use
+        #echo "$BATTERY_STATUS" | mail -s "Battery for $HOSTNAME at ""$BATTERY_PERCENT" $EMAIL # or replace $EMAIL with youremailaddress.com
+        # commend msmtp, uncomment to use
+        echo -e "Subject: Battery for $HOSTNAME at ""$BATTERY_PERCENT\r\n\r\n$BATTERY_STATUS" | msmtp --from=default -t "$EMAIL" # or replace $EMAIL with youremailaddress.com
+        #echo "Got to 2"
+        exit 0;
+else
+        echo "Got to 2b"
+        # If the power is at 100%, I really I only want to log only once a day,
+        # so write the date to the file if the date changed or there was no date
+        # or no file. Note that if there was no file, or there are other issues,
+        # this compare fails, and it simply write to the log and creates a new
+        # LAST_BATTERY_CHECK_VARIABLE in the file of the same name.
+        if [ "$DATE_LAST_LOGGED" !=  "$DATE_NOW" ]
+                then
+                echo -e "Battery for $HOSTNAME at "$BATTERY_PERCENT" at `date`"
+                echo "${DATE_NOW}" >$LAST_BATTERY_CHECK_VARIABLE_FILE
+                #echo "Got to 3"
+                exit 0;
+        fi
+fi
+#echo "Got to 4"
