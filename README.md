@@ -74,6 +74,18 @@
         sudo gedit /etc/crontab
         */5 * * * * root /home/jim/bin/battery-check/battery-check
         dc (commandline calculator)
+
+      
+      Dependencies
+        ACPI (Advanced Configuration and Power Interface) 
+          Probably a "sudo apt-get install acpi" away. 
+        awk (gawk) probably already installed, but if not, "sudo apt-get install gawk"
+        send mail capabilities (http://www.absolutelytech.com/2010/07/17/howto-configure-msmtp-to-work-with-gmail-on-linux/)
+
+        Add lines to your cron file (there's lots of tutorials, but they're too complicated)
+        sudo gedit /etc/crontab
+        */5 * * * * root /home/jim/bin/battery-check/battery-check
+        dc (commandline calculator)
 #
 
       
