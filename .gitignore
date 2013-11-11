@@ -23,4 +23,3 @@
 battery_check_config_file
 *.sublime-project
 *.sublime-workspace
-.gitignore
