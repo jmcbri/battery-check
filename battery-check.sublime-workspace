@@ -519,22 +519,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "README.md",
-			"settings":
-			{
-				"buffer_size": 24683,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "battery-check",
-			"settings":
-			{
-				"buffer_size": 2380,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "Packages/Ruby/Ruby.sublime-build",
 	"command_palette":
@@ -568,6 +552,10 @@
 	},
 	"file_history":
 	[
+		"/home/jim/bin/battery-check/README.md",
+		"/home/jim/bin/battery-check/battery-check",
+		"/home/jim/bin/battery-check/.gitignore",
+		"/home/jim/bin/battery-check/LICENSE",
 		"/home/jim/rails/apps/apoxeia/spec/helpers/application_helper_spec.rb",
 		"/home/jim/rails/apps/apoxeia/app/controllers/microposts_controller.rb",
 		"/home/jim/rails/apps/apoxeia/app/controllers/relationships_controller.rb",
@@ -691,11 +679,7 @@
 		"/home/jim/rails/apps/apoxeia/app/assets/stylesheets/case_informations.css.scss",
 		"/home/jim/rails/apps/apoxeia/app/views/case_informations/index.html.erbworksnotquiteworking",
 		"/home/jim/rails/apps/apoxeia/app/views/case_informations/index.html.erbbad0412",
-		"/home/jim/rails/apps/apoxeia/app/views/case_informations/index.html.erbworking4-12",
-		"/home/jim/rails/apps/apoxeia/app/views/case_informations/junk.html.erb",
-		"/home/jim/Desktop/dmesg",
-		"/home/jim/Desktop/lastlog",
-		"/home/jim/rails/apps/apoxeia/app/views/judges_parts/show.html.erbold"
+		"/home/jim/rails/apps/apoxeia/app/views/case_informations/index.html.erbworking4-12"
 	],
 	"find":
 	{
@@ -925,65 +909,8 @@
 	"groups":
 	[
 		{
-			"selected": 1,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "README.md",
-					"settings":
-					{
-						"buffer_size": 24683,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5163,
-								5163
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Markdown/Markdown.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 912.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "battery-check",
-					"settings":
-					{
-						"buffer_size": 2380,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								958,
-								958
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage",
-							"tab_size": 8,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
