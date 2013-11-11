@@ -18,11 +18,20 @@ BATTERY_CHECK_LOG_FILE="/var/log/battery-check.log"
 # the $EMAIL variable (which is the only value in the config file) with your
 # email address.
 BATTERY_CHECK_CONFIG_FILE="/home/jim/bin/battery-check/battery_check_config_file"
+# Basically, the file below just stores the date of the last check. If the date
+# changes, the date gets updated and a line is written to the log file,
+# otherwise, nothing is logged unless the power falls below the threshold.
+LAST_BATTERY_CHECK_VARIABLE_FILE="/var/log/last_battery_check_file"
 ################################################################################
 exec >>$BATTERY_CHECK_LOG_FILE 2>&1
 BATTERY_STATUS=$(/usr/bin/acpi -b)
 #echo $BATTERY_STATUS # a bit of debugging code, left for potential future use
-# Weirdly substr takes the starting index and the number of characters.
+# No idea what awk really does. Worse, I've made some assumptions about acpi -b
+# that may turn out to be wrong.  Specifically, I'm assuming there will only be
+# one percentage sign in the acpi -b output. Also, I'm assuming and this is a
+# big one, that acpi formats the number in 4 chars no matter what. In other 
+# words we go from "100%" (four chars) to "  1%". If that's not true, the code
+# below will fail. Left for a future fix.
 BATTERY_PERCENT=$(/usr/bin/acpi -b | awk '{ loc=index($0,"%"); print substr($0,loc-3,4)}')
 #echo "$BATTERY_PERCENT"
 BATTERY_PERCENT_WO_PERCENT_SIGN=$(/usr/bin/acpi -b | awk '{ loc=index($0,"%"); print substr($0,loc-3,3)}')
@@ -36,7 +45,7 @@ DATE_NOW=$(date | awk '{ print substr( $0, 0, 11 ) }')
 read DATE_LAST_LOGGED <$LAST_BATTERY_CHECK_VARIABLE_FILE
 if [ -f $BATTERY_CHECK_CONFIG_FILE ]
     # The below is just # a bit of debugging code, left for potential future use
-    # echo "Config file exists, trying to read email addresss from it"
+    #echo "Config file exists, trying to read email addresss from it"
     then
     read EMAIL<$BATTERY_CHECK_CONFIG_FILE
     #echo $EMAIL # a bit of debugging code, left for future use
@@ -45,29 +54,42 @@ fi
 #if [ "$BATTERY_PERCENT" != "100%" ] # Old test code for 100% check, not needed
 # 
 if ! echo "$BATTERY_THRESHOLD $BATTERY_PERCENT_WO_PERCENT_SIGN -p" | dc | grep > /dev/null ^-; then
-        #echo "Got to 1b"
+        #echo "Got to 1b" # a bit of debugging code, left for future use
         # Running on battery, so log every check and and send email
         echo "Battery for $HOSTNAME at "$BATTERY_PERCENT" at `date` "$BATTERY_STATUS
-        #echo "Got to 1c"
+        #echo "Got to 1c" # a bit of debugging code, left for future use
         # command for mail/semdmail, uncomment to use
         #echo "$BATTERY_STATUS" | mail -s "Battery for $HOSTNAME at ""$BATTERY_PERCENT" $EMAIL # or replace $EMAIL with youremailaddress.com
-        # commend msmtp, uncomment to use
+        # command for msmtp, uncomment to use
         echo -e "Subject: Battery for $HOSTNAME at ""$BATTERY_PERCENT\r\n\r\n$BATTERY_STATUS" | msmtp --from=default -t "$EMAIL" # or replace $EMAIL with youremailaddress.com
-        #echo "Got to 2"
+        #echo "Got to 2" # a bit of debugging code, left for future use
         exit 0;
 else
-        echo "Got to 2b"
+        #echo "Got to 2b" # a bit of debugging code, left for future use
+        
         # If the power is at or above the threshold, I really I want to log
         # only once a day, so write the date to the file if the date has changed
         # or there was no date or no file. Note that if there was no file, or 
         # there are other issues, this compare fails, and it simply writes 
         # to the log and creates a new LAST_BATTERY_CHECK_VARIABLE in the
         # file of the same name.
-        if [ "$DATE_LAST_LOGGED" !=  "$DATE_NOW" ]
+
+        # The below is just # a bit of debugging code, left for future use
+        #echo "Date last logged: T $DATE_LAST_LOGGED T Date now: T $DATE_NOW T"
+        
+        # Note that the extra space in DATE_LAST_LOGGED expression was required
+        # to get the compare to work. Ugly! Have to correct that at some 
+        # point, the better fix might be to instead strip off all spaces
+        # on DATE_LAST_LOGGED AND DATE_NOW before the compare
+
+        if [ "$DATE_LAST_LOGGED " !=  "$DATE_NOW" ]
                 then
                 echo -e "Battery for $HOSTNAME at "$BATTERY_PERCENT" at `date`"
-                echo "${DATE_NOW}" >$LAST_BATTERY_CHECK_VARIABLE_FILE
-                #echo "Got to 3"
+                # For some reason, the write or the read was adding an extra
+                # space, which caused the compare in this if-block to fail 
+                # the \n fixing that, but 
+                echo "${DATE_NOW}">$LAST_BATTERY_CHECK_VARIABLE_FILE
+                #echo "Got to 3" # a bit of debugging code, left for future use
                 exit 0;
         fi
 fi
