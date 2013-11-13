@@ -53,7 +53,7 @@ fi
 #echo "Got to 1a" # a bit of debugging code, left for future use
 #if [ "$BATTERY_PERCENT" != "100%" ] # Old test code for 100% check, not needed
 # 
-if ! echo "$BATTERY_THRESHOLD $BATTERY_PERCENT_WO_PERCENT_SIGN -p" | dc | grep > /dev/null ^-; then
+if ! echo "$BATTERY_THRESHOLD $BATTERY_PERCENT_WO_PERCENT_SIGN - p" | dc | grep > /dev/null ^-; then
         #echo "Got to 1b" # a bit of debugging code, left for future use
         # Running on battery, so log every check and and send email
         echo "Battery for $HOSTNAME at "$BATTERY_PERCENT" at `date` "$BATTERY_STATUS
