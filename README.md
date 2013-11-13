@@ -16,14 +16,16 @@ battery-check is a short bash script to check the power (battery) status reporte
 ## Quick start
 
 * Download the source: git clone https://github.com/jmcbri/battery-check
-* Open and edit the battery-check file to match your needs (See comments in file)
+* Open and edit the battery-check file to match your needs. Specifically, the top has configuration information, and you'll need also to decide whether to have the email address embedded in the file or in a seperate file. (See comments in file)
 * Save the file somewhere
-* Set the file as executable by root(chmod 700 /path/to/file/battery-check)
-* Change ownership to root (sudo chown root:root /path/to/file/battery-check)
-* Add the checking as a cron job
+* Since we are going to have it run as a system cron job, maybe change ownership to root (sudo chown root:root /path/to/file/battery-check)
+* Set the file as executable only by root(chmod 700 /path/to/file/battery-check)
+* Add the checking as a cron job  
     Add lines to your cron file (there's lots of tutorials, but they're too complicated)  
     sudo gedit /etc/crontab  
     \*/5 \* \* \* \* root /home/jim/bin/battery-check/battery-check
+
+    Make sure there's a return (CRLF at the end)
 
 ## Bugs and feature requests
 
