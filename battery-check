@@ -82,7 +82,7 @@ else
         # point, the better fix might be to instead strip off all spaces
         # on DATE_LAST_LOGGED AND DATE_NOW before the compare
 
-        if [ "$DATE_LAST_LOGGED " !=  "$DATE_NOW" ]
+        if [ "$DATE_LAST_LOGGED" !=  "$DATE_NOW" ]
                 then
                 echo -e "Battery for $HOSTNAME at "$BATTERY_PERCENT" at `date`"
                 # For some reason, the write or the read was adding an extra
